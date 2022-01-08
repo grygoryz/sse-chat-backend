@@ -17,13 +17,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "ts-node ./scripts/check-connection-name-env.ts && ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/ormconfig.ts -c $CONNECTION_NAME",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/ormconfig.ts",
     "typeorm:schema:drop": "npm run typeorm schema:drop",
     "typeorm:migration:generate": "npm run typeorm migration:generate -- -n",
     "typeorm:migration:run": "npm run typeorm migration:run",
     "typeorm:migration:revert": "npm run typeorm migration:revert",
-    "typeorm:seed:run": "ts-node ./scripts/check-connection-name-env.ts && ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js -r src -n ormconfig.ts -c $CONNECTION_NAME seed",
-    "typeorm:seed:run:single": "ts-node ./scripts/check-connection-name-env.ts && ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js -r src -n ormconfig.ts -c $CONNECTION_NAME seed -s"
+    "typeorm:seed:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js -r src -n ormconfig.ts seed",
+    "typeorm:seed:run:single": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js -r src -n ormconfig.ts seed -s"
   },
   "dependencies": {
     "@liaoliaots/nestjs-redis": "^5.1.1",
