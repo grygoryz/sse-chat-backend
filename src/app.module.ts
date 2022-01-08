@@ -1,11 +1,15 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { configuration, loggerConfigFactory, redisConfigFactory } from '@config';
+import { configuration, ConfigVariables, loggerConfigFactory, redisConfigFactory, sessionConfigFactory } from '@config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormConfig } from './ormconfig';
 import { LoggerModule } from 'nestjs-pino';
 import { ChatModule } from './chat/chat.module';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { InjectRedis, RedisModule } from '@liaoliaots/nestjs-redis';
+import { AuthModule } from './auth/auth.module';
+import { redisNamespaces } from '@helpers/mappings';
+import { Redis } from 'ioredis';
+import * as session from 'express-session';
 
 @Module({
 	imports: [
@@ -24,6 +28,17 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
 			useFactory: redisConfigFactory,
 		}),
 		ChatModule,
+		AuthModule,
 	],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+	constructor(
+		@InjectRedis(redisNamespaces.main) private readonly redisClient: Redis,
+		private readonly configService: ConfigService<ConfigVariables>,
+	) {}
+
+	configure(consumer: MiddlewareConsumer) {
+		const sessionConfig = sessionConfigFactory(this.configService, this.redisClient);
+		consumer.apply(session(sessionConfig)).forRoutes('*');
+	}
+}

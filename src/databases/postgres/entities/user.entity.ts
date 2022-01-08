@@ -7,4 +7,7 @@ export class User {
 
 	@Column('varchar', { length: 50 })
 	name!: string;
+
+	@Column('text', { select: false })
+	password!: string;
 }

@@ -5,4 +5,6 @@ export const configuration = () => ({
 
 	redisPort: process.env.REDIS_PORT,
 	redisHost: process.env.REDIS_HOST,
+
+	sessionSecret: process.env.SESSION_SECRET,
 });
