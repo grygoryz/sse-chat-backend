@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Socket } from './socket.interface';
 import { Message } from './message.interface';
 import { ChatRedisRepository } from '../chat-redis.repository';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class SocketsManagerService implements OnModuleInit {
@@ -17,8 +18,10 @@ export class SocketsManagerService implements OnModuleInit {
 		});
 	}
 
-	addSocket(id: string, socket: Socket) {
-		this.sockets.set(id, socket);
+	addSocket(socket: Socket): string {
+		const socketId = crypto.randomUUID();
+		this.sockets.set(socketId, socket);
+		return socketId;
 	}
 
 	removeSocket(id: string) {
