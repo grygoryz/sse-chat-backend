@@ -38,6 +38,19 @@ export class ChatRedisRepository {
 		return !!result;
 	}
 
+	async addUserSocket(userId: number, socketId: string): Promise<void> {
+		await this.client.sadd(`chat:users-sockets:${userId}`, socketId);
+	}
+
+	async removeUserSocket(userId: number, socketId: string): Promise<void> {
+		await this.client.srem(`chat:users-sockets:${userId}`, socketId);
+	}
+
+	async hasUserSockets(id: number) {
+		const count = await this.client.scard(`chat:users-sockets:${id}`);
+		return count > 0;
+	}
+
 	async getUsers(): Promise<Array<UserDataBO>> {
 		return await new Promise((resolve, reject) => {
 			const ids = new Set<string>();

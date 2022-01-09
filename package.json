@@ -26,10 +26,10 @@
     "typeorm:seed:run:single": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js -r src -n ormconfig.ts seed -s"
   },
   "dependencies": {
-    "@liaoliaots/nestjs-redis": "^5.1.1",
-    "@nestjs/common": "^8.0.0",
+    "@liaoliaots/nestjs-redis": "5.2.0",
+    "@nestjs/common": "^8.2.4",
     "@nestjs/config": "^1.0.1",
-    "@nestjs/core": "^8.0.0",
+    "@nestjs/core": "^8.2.4",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.0.9",
