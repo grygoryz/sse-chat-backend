@@ -1,11 +1,12 @@
 import { eventsTypes } from '../mappings';
 import { EventBO } from './event.bo';
 import { UserDataBO } from './user-data.bo';
+import { MessagesResponseBO } from './messages-response.bo';
 
-export interface InitialDataEvent extends EventBO {
+export interface InitialDataEventBO extends EventBO {
 	type: typeof eventsTypes['initialData'];
 	data: {
-		messages: Array<any>;
+		messages: MessagesResponseBO;
 		users: Array<UserDataBO>;
 	};
 }

@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SocketsManagerService } from './sockets-manager/sockets-manager.service';
 import { Socket } from './sockets-manager/socket.interface';
-import { InitialDataEvent, UserConnectedEvent, UserDataBO } from './bos';
+import { InitialDataEventBO, MessageBO, MessageEventBO, MessagesResponseBO, UserConnectedEventBO, UserDataBO } from './bos';
 import { eventsTypes, messagesPageSize } from './mappings';
 import { ChatRedisRepository } from './chat-redis.repository';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class ChatService {
@@ -12,13 +13,13 @@ export class ChatService {
 		private readonly chatRedisRepository: ChatRedisRepository,
 	) {}
 
-	async connectUser(userData: UserDataBO, sessionId: string, socket: Socket) {
-		this.socketsManagerService.addSocket(sessionId, socket);
+	async connectUser(userData: UserDataBO, socket: Socket): Promise<void> {
+		const socketId = this.socketsManagerService.addSocket(socket);
 
 		const isConnected = await this.chatRedisRepository.isUserConnected(userData.id);
 		if (!isConnected) {
-			await this.chatRedisRepository.addUser(userData.id, userData.name);
-			await this.socketsManagerService.broadcast<UserConnectedEvent>({
+			await this.chatRedisRepository.addUser(userData);
+			await this.socketsManagerService.broadcast<UserConnectedEventBO>({
 				type: eventsTypes.userConnected,
 				data: userData,
 			});
@@ -29,9 +30,24 @@ export class ChatService {
 			this.chatRedisRepository.getMessages(0, messagesPageSize),
 		]);
 
-		this.socketsManagerService.sendTo<InitialDataEvent>(sessionId, {
+		this.socketsManagerService.sendTo<InitialDataEventBO>(socketId, {
 			type: eventsTypes.initialData,
 			data: { users, messages },
 		});
+	}
+
+	async sendMessage(data: Pick<MessageBO, 'from' | 'text'>) {
+		const id = crypto.randomUUID();
+		const message = { id, timestamp: Date.now(), ...data };
+
+		await this.chatRedisRepository.addMessage(message);
+		await this.socketsManagerService.broadcast<MessageEventBO>({
+			type: eventsTypes.message,
+			data: message,
+		});
+	}
+
+	async getMessages(start: number): Promise<MessagesResponseBO> {
+		return await this.chatRedisRepository.getMessages(start, messagesPageSize);
 	}
 }

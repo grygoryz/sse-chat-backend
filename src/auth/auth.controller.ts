@@ -2,10 +2,11 @@ import { Body, Controller, Get, Put, Session, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDTOBody, SignUpDTOBody } from './request-dtos';
 import { CheckDTO, SignInDTO } from './response-dtos';
-import { SessionBO } from '@common/bos';
+import { SessionBO, UserBO } from '@common/bos';
 import { ApiTags } from '@nestjs/swagger';
 import { promisify } from 'util';
 import { AuthGuard } from '@common/guards';
+import { User } from '@common/decorators';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -29,8 +30,8 @@ export class AuthController {
 
 	@Get('check')
 	@UseGuards(AuthGuard)
-	async check(@Session() session: SessionBO): Promise<CheckDTO> {
-		return await this.authService.check(session.user.id);
+	async check(@User() user: UserBO): Promise<CheckDTO> {
+		return await this.authService.check(user.id);
 	}
 
 	@Put('sign-out')
