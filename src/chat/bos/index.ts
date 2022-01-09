@@ -5,3 +5,4 @@ export { UserConnectedEventBO } from './user-connected-event.bo';
 export { MessageBO } from './message.bo';
 export { MessageEventBO } from './message-event.bo';
 export { MessagesResponseBO } from './messages-response.bo';
+export { UserDisconnectedEventBO } from './user-disconnected-event.bo';

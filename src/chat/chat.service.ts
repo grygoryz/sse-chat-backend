@@ -1,7 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { SocketsManagerService } from './sockets-manager/sockets-manager.service';
 import { Socket } from './sockets-manager/socket.interface';
-import { InitialDataEventBO, MessageBO, MessageEventBO, MessagesResponseBO, UserConnectedEventBO, UserDataBO } from './bos';
+import {
+	InitialDataEventBO,
+	MessageBO,
+	MessageEventBO,
+	MessagesResponseBO,
+	UserConnectedEventBO,
+	UserDataBO,
+	UserDisconnectedEventBO,
+} from './bos';
 import { eventsTypes, messagesPageSize } from './mappings';
 import { ChatRedisRepository } from './chat-redis.repository';
 import * as crypto from 'crypto';
@@ -13,9 +21,7 @@ export class ChatService {
 		private readonly chatRedisRepository: ChatRedisRepository,
 	) {}
 
-	async connectUser(userData: UserDataBO, socket: Socket): Promise<void> {
-		const socketId = this.socketsManagerService.addSocket(socket);
-
+	async connectUser(userData: UserDataBO, socket: Socket): Promise<string> {
 		const isConnected = await this.chatRedisRepository.isUserConnected(userData.id);
 		if (!isConnected) {
 			await this.chatRedisRepository.addUser(userData);
@@ -30,10 +36,28 @@ export class ChatService {
 			this.chatRedisRepository.getMessages(0, messagesPageSize),
 		]);
 
+		const socketId = this.socketsManagerService.addSocket(socket);
+		await this.chatRedisRepository.addUserSocket(userData.id, socketId);
+
 		this.socketsManagerService.sendTo<InitialDataEventBO>(socketId, {
 			type: eventsTypes.initialData,
 			data: { users, messages },
 		});
+
+		return socketId;
+	}
+
+	async disconnectUser(userData: UserDataBO, socketId: string) {
+		const { id: userId } = userData;
+		await this.chatRedisRepository.removeUserSocket(userId, socketId);
+		const hasSockets = await this.chatRedisRepository.hasUserSockets(userId);
+		if (!hasSockets) {
+			await this.chatRedisRepository.removeUser(userId);
+			await this.socketsManagerService.broadcast<UserDisconnectedEventBO>({
+				type: eventsTypes.userDisconnected,
+				data: userData,
+			});
+		}
 	}
 
 	async sendMessage(data: Pick<MessageBO, 'from' | 'text'>) {

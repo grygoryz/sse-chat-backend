@@ -17,17 +17,22 @@ export class ChatController {
 
 	@Sse()
 	@UseGuards(AuthGuard)
-	connectToChat(@User() user: UserBO): Observable<MessageEvent> {
-		const observable: Observable<MessageEvent> = new Observable(observer => {
+	connectToChat(@User() user: UserBO, @Req() req: Request): Observable<MessageEvent> {
+		return new Observable(observer => {
 			const socket: Socket = {
 				emit: observer.next.bind(observer),
 				disconnect: observer.complete.bind(observer),
 			};
 
-			this.chatService.connectUser(user, socket).catch(err => observer.error(err));
+			this.chatService
+				.connectUser(user, socket)
+				.then(socketId => {
+					req.on('close', async () => {
+						await this.chatService.disconnectUser(user, socketId);
+					});
+				})
+				.catch(err => observer.error(err));
 		});
-
-		return observable;
 	}
 
 	@Post('messages')
