@@ -1,4 +1,4 @@
-import { Controller, Sse, MessageEvent, UseGuards, Post, Body, Get, Query, Req } from '@nestjs/common';
+import { Controller, Sse, MessageEvent, UseGuards, Post, Body, Get, Query, Req, Logger } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Observable } from 'rxjs';
 import { Socket } from './sockets-manager/socket.interface';
@@ -13,6 +13,8 @@ import { Request } from 'express';
 @Controller('chat')
 @ApiTags('Chat')
 export class ChatController {
+	private readonly logger = new Logger(ChatController.name);
+
 	constructor(private readonly chatService: ChatService) {}
 
 	@Sse()
@@ -27,9 +29,7 @@ export class ChatController {
 			this.chatService
 				.connectUser(user, socket)
 				.then(socketId => {
-					req.on('close', async () => {
-						await this.chatService.disconnectUser(user, socketId);
-					});
+					req.on('close', this.getDisconnectHandler(user, socketId));
 				})
 				.catch(err => observer.error(err));
 		});
@@ -45,5 +45,17 @@ export class ChatController {
 	@UseGuards(AuthGuard, UserConnectedToChatGuard)
 	async getMessages(@Query() query: GetMessagesDTOQuery) {
 		return await this.chatService.getMessages(query.start);
+	}
+
+	private getDisconnectHandler(user: UserBO, socketId: string): () => Promise<void> {
+		return async () => {
+			try {
+				await this.chatService.disconnectUser(user, socketId);
+			} catch (err) {
+				if (err instanceof Error) {
+					this.logger.error(err.message, err.stack);
+				}
+			}
+		};
 	}
 }
