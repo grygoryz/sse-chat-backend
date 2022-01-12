@@ -1,4 +1,4 @@
 export interface Message {
-    type: 'broadcast';
-    data: any;
+	type: 'broadcast';
+	data: any;
 }
