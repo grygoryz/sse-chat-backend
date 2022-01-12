@@ -49,7 +49,9 @@ export class ChatService {
 
 	async disconnectUser(userData: UserDataBO, socketId: string) {
 		const { id: userId } = userData;
+		this.socketsManagerService.removeSocket(socketId);
 		await this.chatRedisRepository.removeUserSocket(userId, socketId);
+
 		const hasSockets = await this.chatRedisRepository.hasUserSockets(userId);
 		if (!hasSockets) {
 			await this.chatRedisRepository.removeUser(userId);
