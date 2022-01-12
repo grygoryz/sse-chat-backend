@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SignInBO, SignUpBO } from './bos';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@databases/postgres/entities';
+import { User } from './entities';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
