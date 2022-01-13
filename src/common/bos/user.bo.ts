@@ -1,4 +1,6 @@
+import { UserId } from '@common/types';
+
 export interface UserBO {
-	id: number;
+	id: UserId;
 	name: string;
 }

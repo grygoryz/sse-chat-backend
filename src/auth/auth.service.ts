@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { UserId } from '@common/types';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,7 @@ export class AuthService {
 		};
 	}
 
-	async check(id: number): Promise<Pick<User, 'name'>> {
+	async check(id: UserId): Promise<Pick<User, 'name'>> {
 		const user = await this.userRepository.findOne(id, { select: ['name'] });
 		if (!user) {
 			throw new Error('User not found');

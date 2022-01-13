@@ -13,6 +13,7 @@ import {
 import { eventsTypes, messagesPageSize } from './mappings';
 import { ChatRedisRepository } from './chat-redis.repository';
 import * as crypto from 'crypto';
+import { SocketId } from '@common/types';
 
 @Injectable()
 export class ChatService {
@@ -21,7 +22,7 @@ export class ChatService {
 		private readonly chatRedisRepository: ChatRedisRepository,
 	) {}
 
-	async connectUser(userData: UserDataBO, socket: Socket): Promise<string> {
+	async connectUser(userData: UserDataBO, socket: Socket): Promise<SocketId> {
 		const isConnected = await this.chatRedisRepository.isUserConnected(userData.id);
 		if (!isConnected) {
 			await this.chatRedisRepository.addUser(userData);
@@ -47,7 +48,7 @@ export class ChatService {
 		return socketId;
 	}
 
-	async disconnectUser(userData: UserDataBO, socketId: string) {
+	async disconnectUser(userData: UserDataBO, socketId: SocketId) {
 		const { id: userId } = userData;
 		this.socketsManagerService.removeSocket(socketId);
 		await this.chatRedisRepository.removeUserSocket(userId, socketId);

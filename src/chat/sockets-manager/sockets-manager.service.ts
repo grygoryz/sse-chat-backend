@@ -3,10 +3,11 @@ import { Socket } from './socket.interface';
 import { Message } from './message.interface';
 import * as crypto from 'crypto';
 import { SocketsManagerRedisRepository } from './sockets-manager-redis.repository';
+import { SocketId } from '@common/types';
 
 @Injectable()
 export class SocketsManagerService implements OnModuleInit {
-	private sockets: Map<string, Socket> = new Map();
+	private sockets: Map<SocketId, Socket> = new Map();
 
 	constructor(private readonly socketsManagerRedisRepository: SocketsManagerRedisRepository) {}
 
@@ -18,17 +19,17 @@ export class SocketsManagerService implements OnModuleInit {
 		});
 	}
 
-	addSocket(socket: Socket): string {
+	addSocket(socket: Socket): SocketId {
 		const socketId = crypto.randomUUID();
 		this.sockets.set(socketId, socket);
 		return socketId;
 	}
 
-	removeSocket(id: string) {
+	removeSocket(id: SocketId) {
 		this.sockets.delete(id);
 	}
 
-	sendTo<T>(id: string, data: T) {
+	sendTo<T>(id: SocketId, data: T) {
 		const socket = this.sockets.get(id);
 		if (!socket) {
 			throw new Error(`Socket ${id} not found`);

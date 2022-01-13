@@ -9,6 +9,7 @@ import { UserBO } from '@common/bos';
 import { User } from '@common/decorators';
 import { UserConnectedToChatGuard } from './guards';
 import { Request } from 'express';
+import { SocketId } from '@common/types';
 
 @Controller('chat')
 @ApiTags('Chat')
@@ -47,7 +48,7 @@ export class ChatController {
 		return await this.chatService.getMessages(query.start);
 	}
 
-	private getDisconnectHandler(user: UserBO, socketId: string): () => Promise<void> {
+	private getDisconnectHandler(user: UserBO, socketId: SocketId): () => Promise<void> {
 		return async () => {
 			try {
 				await this.chatService.disconnectUser(user, socketId);
