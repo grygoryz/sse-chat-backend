@@ -38,7 +38,7 @@ export class ChatController {
 
 	@Post('messages')
 	@UseGuards(AuthGuard, UserConnectedToChatGuard)
-	async sendMessage(@Body() body: SendMessageDTOBody, @User() user: UserBO) {
+	async sendMessage(@Body() body: SendMessageDTOBody, @User() user: UserBO): Promise<void> {
 		await this.chatService.sendMessage({ ...body, from: user.name });
 	}
 
