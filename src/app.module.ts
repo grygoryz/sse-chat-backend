@@ -9,7 +9,6 @@ import { InjectRedis, RedisModule } from '@liaoliaots/nestjs-redis';
 import { AuthModule } from './auth/auth.module';
 import { redisNamespaces } from '@helpers/mappings';
 import { Redis } from 'ioredis';
-import { TestModule } from './test/test.module';
 import * as session from 'express-session';
 
 @Module({
@@ -30,7 +29,6 @@ import * as session from 'express-session';
 		}),
 		ChatModule,
 		AuthModule,
-		TestModule,
 	],
 })
 export class AppModule implements NestModule {
