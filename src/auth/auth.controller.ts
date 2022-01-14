@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { SignInDTOBody, SignUpDTOBody } from './request-dtos';
 import { CheckDTO, SignInDTO } from './response-dtos';
 import { SessionBO, UserBO } from '@common/bos';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { promisify } from 'util';
 import { AuthGuard } from '@common/guards';
 import { User } from '@common/decorators';
@@ -19,6 +19,7 @@ export class AuthController {
 	}
 
 	@Put('sign-in')
+	@ApiOkResponse({ type: SignInDTO })
 	async signIn(@Body() body: SignInDTOBody, @Session() session: SessionBO): Promise<SignInDTO> {
 		const response = await this.authService.signIn(body);
 		session.user = response;
@@ -30,6 +31,7 @@ export class AuthController {
 
 	@Get('check')
 	@UseGuards(AuthGuard)
+	@ApiOkResponse({ type: CheckDTO })
 	async check(@User() user: UserBO): Promise<CheckDTO> {
 		return await this.authService.check(user.id);
 	}

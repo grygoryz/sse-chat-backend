@@ -2,7 +2,7 @@ import { Controller, Sse, MessageEvent, UseGuards, Post, Body, Get, Query, Req, 
 import { ChatService } from './chat.service';
 import { Observable } from 'rxjs';
 import { Socket } from './sockets-manager/socket.interface';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@common/guards';
 import { GetMessagesDTOQuery, SendMessageDTOBody } from './request-dtos';
 import { UserBO } from '@common/bos';
@@ -10,6 +10,7 @@ import { User } from '@common/decorators';
 import { UserConnectedToChatGuard } from './guards';
 import { Request } from 'express';
 import { SocketId } from '@common/types';
+import { GetMessagesDTO } from '../auth/response-dtos';
 
 @Controller('chat')
 @ApiTags('Chat')
@@ -44,7 +45,8 @@ export class ChatController {
 
 	@Get('messages')
 	@UseGuards(AuthGuard, UserConnectedToChatGuard)
-	async getMessages(@Query() query: GetMessagesDTOQuery) {
+	@ApiOkResponse({ type: GetMessagesDTO })
+	async getMessages(@Query() query: GetMessagesDTOQuery): Promise<GetMessagesDTO> {
 		return await this.chatService.getMessages(query.start);
 	}
 
