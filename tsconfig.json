@@ -20,7 +20,7 @@
       "@databases/*":["src/databases/*"],
       "@config":["src/config"],
       "@helpers":["src/helpers"],
-      "@helpers/*":["src/helpers/*"],
+      "@helpers/*":["src/helpers/*"]
     }
   }
 }
