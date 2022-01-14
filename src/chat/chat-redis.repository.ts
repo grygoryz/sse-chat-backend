@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
-import { redisNamespaces, redisChatChannel } from '@helpers/mappings';
+import { redisNamespaces } from '@helpers/mappings';
 import { MessageBO, MessagesResponseBO, UserDataBO } from './bos';
 import { maxMessagesCount } from './mappings';
 

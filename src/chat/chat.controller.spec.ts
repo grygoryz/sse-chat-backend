@@ -10,7 +10,6 @@ import { SendMessageDTOBody } from './request-dtos';
 import { MessagesResponseBO, UserConnectedEventBO } from './bos';
 import * as crypto from 'crypto';
 import { Request } from 'express';
-import { User } from '../auth/entities';
 import { Socket } from './sockets-manager/socket.interface';
 import { eventsTypes } from './mappings';
 
