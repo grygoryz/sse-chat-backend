@@ -1,18 +1,22 @@
-import { Controller, Sse, MessageEvent, UseGuards, Post, Body, Get, Query, Req } from '@nestjs/common';
+import { Controller, Sse, MessageEvent, UseGuards, Post, Body, Get, Query, Req, Logger } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Observable } from 'rxjs';
 import { Socket } from './sockets-manager/socket.interface';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@common/guards';
 import { GetMessagesDTOQuery, SendMessageDTOBody } from './request-dtos';
 import { UserBO } from '@common/bos';
 import { User } from '@common/decorators';
 import { UserConnectedToChatGuard } from './guards';
 import { Request } from 'express';
+import { SocketId } from '@common/types';
+import { GetMessagesDTO } from '../auth/response-dtos';
 
 @Controller('chat')
 @ApiTags('Chat')
 export class ChatController {
+	private readonly logger = new Logger(ChatController.name);
+
 	constructor(private readonly chatService: ChatService) {}
 
 	@Sse()
@@ -27,9 +31,7 @@ export class ChatController {
 			this.chatService
 				.connectUser(user, socket)
 				.then(socketId => {
-					req.on('close', async () => {
-						await this.chatService.disconnectUser(user, socketId);
-					});
+					req.on('close', this.getDisconnectHandler(user, socketId));
 				})
 				.catch(err => observer.error(err));
 		});
@@ -37,13 +39,26 @@ export class ChatController {
 
 	@Post('messages')
 	@UseGuards(AuthGuard, UserConnectedToChatGuard)
-	async sendMessage(@Body() body: SendMessageDTOBody, @User() user: UserBO) {
+	async sendMessage(@Body() body: SendMessageDTOBody, @User() user: UserBO): Promise<void> {
 		await this.chatService.sendMessage({ ...body, from: user.name });
 	}
 
 	@Get('messages')
 	@UseGuards(AuthGuard, UserConnectedToChatGuard)
-	async getMessages(@Query() query: GetMessagesDTOQuery) {
+	@ApiOkResponse({ type: GetMessagesDTO })
+	async getMessages(@Query() query: GetMessagesDTOQuery): Promise<GetMessagesDTO> {
 		return await this.chatService.getMessages(query.start);
+	}
+
+	private getDisconnectHandler(user: UserBO, socketId: SocketId): () => Promise<void> {
+		return async () => {
+			try {
+				await this.chatService.disconnectUser(user, socketId);
+			} catch (err) {
+				if (err instanceof Error) {
+					this.logger.error(err.message, err.stack);
+				}
+			}
+		};
 	}
 }

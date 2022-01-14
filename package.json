@@ -26,6 +26,7 @@
     "typeorm:seed:run:single": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js -r src -n ormconfig.ts seed -s"
   },
   "dependencies": {
+    "@golevelup/ts-jest": "^0.3.2",
     "@liaoliaots/nestjs-redis": "5.2.0",
     "@nestjs/common": "^8.2.4",
     "@nestjs/config": "^1.0.1",
@@ -54,7 +55,7 @@
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
-    "@nestjs/testing": "^8.0.0",
+    "@nestjs/testing": "^8.2.5",
     "@types/bcrypt": "^5.0.0",
     "@types/connect-redis": "^0.0.18",
     "@types/express": "^4.17.13",
@@ -80,22 +81,5 @@
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.10.1",
     "typescript": "^4.3.5"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }

@@ -9,7 +9,7 @@ export const loggerConfigFactory = (config: ConfigService<ConfigVariables>): Par
 				translateTime: 'SYS:standard',
 				ignore: 'hostname,pid',
 			},
-			redact: ['*.headers.cookie'],
+			redact: ['*.headers.cookie', 'req.body.password'],
 			serializers: {
 				req(req) {
 					req.body = req.raw.body;

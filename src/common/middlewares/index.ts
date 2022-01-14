@@ -1,1 +1,1 @@
-export { attachResponseBodyToRes } from './attachResponseBodyToRes.middleware';
+export { attachResponseBodyToRes } from './attach-response-body-to-res.middleware';

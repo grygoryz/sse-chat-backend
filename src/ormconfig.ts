@@ -16,7 +16,7 @@ export const typeormConfig: TypeormConfig = {
 	maxQueryExecutionTime: 1000,
 	synchronize: false,
 	logging: NODE_ENV !== 'production',
-	entities: [`${__dirname}/databases/postgres/entities/*.entity.{ts,js}`],
+	entities: [`${__dirname}/**/entities/*.entity.{ts,js}`],
 	migrations: [`${__dirname}/databases/postgres/migrations/*.{ts,js}`],
 	seeds: [`${__dirname}/databases/postgres/seeds/*.{ts,js}`],
 	cli: {
