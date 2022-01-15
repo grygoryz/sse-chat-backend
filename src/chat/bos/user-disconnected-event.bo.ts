@@ -4,5 +4,5 @@ import { EventBO } from './event.bo';
 
 export interface UserDisconnectedEventBO extends EventBO {
 	type: typeof eventsTypes['userDisconnected'];
-	data: UserDataBO;
+	data: Pick<UserDataBO, 'id'>;
 }
