@@ -130,7 +130,7 @@ describe('ChatController', () => {
 			expect(chatRedisRepository.removeUser).toBeCalledWith(userData.id);
 			expect(socketsManagerService.broadcast).toBeCalledWith(<UserDisconnectedEventBO>{
 				type: eventsTypes.userDisconnected,
-				data: userData,
+				data: { id: userData.id },
 			});
 		});
 

@@ -58,7 +58,7 @@ export class ChatService {
 			await this.chatRedisRepository.removeUser(userId);
 			await this.socketsManagerService.broadcast<UserDisconnectedEventBO>({
 				type: eventsTypes.userDisconnected,
-				data: userData,
+				data: { id: userData.id },
 			});
 		}
 	}
