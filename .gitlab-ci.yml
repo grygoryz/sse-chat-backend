@@ -1,0 +1,60 @@
+variables:
+  SERVICE_NAME: "${CI_PROJECT_NAME}"
+
+stages:
+  - build
+  - deploy
+
+.docker: &docker
+  variables:
+    DOCKER_DRIVER: overlay2
+    APP_IMAGE_SHA: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    NGINX_IMAGE_SHA: $CI_REGISTRY_IMAGE/nginx
+  image: docker:18.09
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+.tags: &tags
+  tags:
+    - ruvds-grygoryz
+
+.trigger: &trigger
+  only:
+    refs:
+      - production
+
+# Actual jobs
+
+app:build:
+  <<: *docker
+  <<: *tags
+  <<: *trigger
+  stage: build
+  script:
+    - docker build --tag "$APP_IMAGE_SHA" .
+    - docker push "$APP_IMAGE_SHA"
+      
+nginx:build:
+  <<: *docker
+  <<: *tags
+  <<: *trigger
+  stage: build
+  script:
+    - docker build -f .deploy/nginx/Dockerfile --tag "$NGINX_IMAGE_SHA" .
+    - docker push "$NGINX_IMAGE_SHA"
+  only:
+    refs:
+      - production
+    changes:
+      - .deploy/nginx/*
+      - .gitlab-ci.yml
+
+deploy:
+  <<: *docker
+  <<: *tags
+  <<: *trigger
+  stage: deploy
+  script:
+    - docker pull "$APP_IMAGE_SHA"
+    - docker pull "$NGINX_IMAGE_SHA"
+    - docker stack deploy --with-registry-auth -c .deploy/app/stack.yml -c .deploy/postgres/stack.yml -c .deploy/redis/stack.yml -c .deploy/nginx/stack.yml "$SERVICE_NAME"
