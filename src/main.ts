@@ -18,6 +18,7 @@ async function bootstrap() {
 	app.useLogger(app.get(Logger));
 	app.enableShutdownHooks();
 	app.disable('x-powered-by');
+	app.set('trust proxy', 1);
 
 	const config = new DocumentBuilder().setTitle('SSE chat').setVersion('1.0').build();
 	const document = SwaggerModule.createDocument(app, config);
