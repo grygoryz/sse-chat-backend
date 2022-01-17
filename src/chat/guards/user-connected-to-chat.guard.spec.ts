@@ -1,26 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserConnectedToChatGuard } from './user-connected-to-chat.guard';
-import { ChatRedisRepository } from '../chat-redis.repository';
+import { ChatRepository } from '../chat.repository';
 import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import { ExecutionContext } from '@nestjs/common';
 
 describe('UserConnectedToChatGuard', () => {
 	let guard: UserConnectedToChatGuard;
-	let chatRedisRepository: DeepMocked<ChatRedisRepository>;
+	let chatRedisRepository: DeepMocked<ChatRepository>;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				UserConnectedToChatGuard,
 				{
-					provide: ChatRedisRepository,
-					useValue: createMock<ChatRedisRepository>(),
+					provide: ChatRepository,
+					useValue: createMock<ChatRepository>(),
 				},
 			],
 		}).compile();
 
 		guard = module.get(UserConnectedToChatGuard);
-		chatRedisRepository = module.get(ChatRedisRepository);
+		chatRedisRepository = module.get(ChatRepository);
 	});
 
 	it('should throw error if user not connected', async () => {

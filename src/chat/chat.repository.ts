@@ -6,7 +6,7 @@ import { MessageBO, MessagesResponseBO, UserDataBO } from './bos';
 import { maxMessagesCount } from './mappings';
 
 @Injectable()
-export class ChatRedisRepository {
+export class ChatRepository {
 	constructor(
 		@InjectRedis(redisNamespaces.main) private readonly client: Redis,
 		@InjectRedis(redisNamespaces.sub) private readonly clientSub: Redis,

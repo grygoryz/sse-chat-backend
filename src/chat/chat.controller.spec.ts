@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { SocketsManagerService } from './sockets-manager/sockets-manager.service';
-import { ChatRedisRepository } from './chat-redis.repository';
-import { SocketsManagerRedisRepository } from './sockets-manager/sockets-manager-redis.repository';
+import { ChatRepository } from './chat.repository';
+import { SocketsManagerRepository } from './sockets-manager/sockets-manager.repository';
 import { createMock } from '@golevelup/ts-jest';
 import { UserBO } from '@common/bos';
 import { SendMessageDTOBody } from './request-dtos';
@@ -24,12 +24,12 @@ describe('ChatController', () => {
 				ChatService,
 				SocketsManagerService,
 				{
-					provide: ChatRedisRepository,
-					useValue: createMock<ChatRedisRepository>(),
+					provide: ChatRepository,
+					useValue: createMock<ChatRepository>(),
 				},
 				{
-					provide: SocketsManagerRedisRepository,
-					useValue: createMock<SocketsManagerRedisRepository>(),
+					provide: SocketsManagerRepository,
+					useValue: createMock<SocketsManagerRepository>(),
 				},
 			],
 		}).compile();
