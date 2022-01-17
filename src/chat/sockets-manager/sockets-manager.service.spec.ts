@@ -2,27 +2,27 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { createMock } from '@golevelup/ts-jest';
 import { Message } from './message.interface';
 import { SocketsManagerService } from './sockets-manager.service';
-import { SocketsManagerRedisRepository } from './sockets-manager-redis.repository';
+import { SocketsManagerRepository } from './sockets-manager.repository';
 import { Socket } from './socket.interface';
 import * as crypto from 'crypto';
 
 describe('ChatController', () => {
 	let service: SocketsManagerService;
-	let socketsManagerRedisRepository: SocketsManagerRedisRepository;
+	let socketsManagerRedisRepository: SocketsManagerRepository;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				SocketsManagerService,
 				{
-					provide: SocketsManagerRedisRepository,
-					useValue: createMock<SocketsManagerRedisRepository>(),
+					provide: SocketsManagerRepository,
+					useValue: createMock<SocketsManagerRepository>(),
 				},
 			],
 		}).compile();
 
 		service = module.get<SocketsManagerService>(SocketsManagerService);
-		socketsManagerRedisRepository = module.get<SocketsManagerRedisRepository>(SocketsManagerRedisRepository);
+		socketsManagerRedisRepository = module.get<SocketsManagerRepository>(SocketsManagerRepository);
 	});
 
 	it('should be defined', () => {

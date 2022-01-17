@@ -1,10 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { ChatRedisRepository } from '../chat-redis.repository';
+import { ChatRepository } from '../chat.repository';
 
 @Injectable()
 export class UserConnectedToChatGuard implements CanActivate {
-	constructor(private readonly chatRedisRepository: ChatRedisRepository) {}
+	constructor(private readonly chatRedisRepository: ChatRepository) {}
 
 	async canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest<Request>();

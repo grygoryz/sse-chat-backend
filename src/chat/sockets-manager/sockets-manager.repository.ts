@@ -4,7 +4,7 @@ import { redisChatChannel, redisNamespaces } from '@helpers/mappings';
 import { Redis } from 'ioredis';
 
 @Injectable()
-export class SocketsManagerRedisRepository {
+export class SocketsManagerRepository {
 	constructor(
 		@InjectRedis(redisNamespaces.main) private readonly client: Redis,
 		@InjectRedis(redisNamespaces.sub) private readonly clientSub: Redis,

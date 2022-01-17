@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChatService } from './chat.service';
 import { SocketsManagerService } from './sockets-manager/sockets-manager.service';
-import { ChatRedisRepository } from './chat-redis.repository';
-import { SocketsManagerRedisRepository } from './sockets-manager/sockets-manager-redis.repository';
+import { ChatRepository } from './chat.repository';
+import { SocketsManagerRepository } from './sockets-manager/sockets-manager.repository';
 import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import {
 	InitialDataEventBO,
@@ -20,7 +20,7 @@ import { eventsTypes } from './mappings';
 describe('ChatController', () => {
 	let service: ChatService;
 	let socketsManagerService: DeepMocked<SocketsManagerService>;
-	let chatRedisRepository: DeepMocked<ChatRedisRepository>;
+	let chatRedisRepository: DeepMocked<ChatRepository>;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -31,19 +31,19 @@ describe('ChatController', () => {
 					useValue: createMock<SocketsManagerService>(),
 				},
 				{
-					provide: ChatRedisRepository,
-					useValue: createMock<ChatRedisRepository>(),
+					provide: ChatRepository,
+					useValue: createMock<ChatRepository>(),
 				},
 				{
-					provide: SocketsManagerRedisRepository,
-					useValue: createMock<SocketsManagerRedisRepository>(),
+					provide: SocketsManagerRepository,
+					useValue: createMock<SocketsManagerRepository>(),
 				},
 			],
 		}).compile();
 
 		service = module.get<ChatService>(ChatService);
 		socketsManagerService = module.get(SocketsManagerService);
-		chatRedisRepository = module.get(ChatRedisRepository);
+		chatRedisRepository = module.get(ChatRepository);
 	});
 
 	it('should be defined', () => {

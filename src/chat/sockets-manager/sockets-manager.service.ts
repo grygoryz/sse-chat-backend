@@ -2,14 +2,14 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Socket } from './socket.interface';
 import { Message } from './message.interface';
 import * as crypto from 'crypto';
-import { SocketsManagerRedisRepository } from './sockets-manager-redis.repository';
+import { SocketsManagerRepository } from './sockets-manager.repository';
 import { SocketId } from '@common/types';
 
 @Injectable()
 export class SocketsManagerService implements OnModuleInit {
 	private sockets: Map<SocketId, Socket> = new Map();
 
-	constructor(private readonly socketsManagerRedisRepository: SocketsManagerRedisRepository) {}
+	constructor(private readonly socketsManagerRedisRepository: SocketsManagerRepository) {}
 
 	async onModuleInit() {
 		await this.socketsManagerRedisRepository.subscribe<Message>(message => {

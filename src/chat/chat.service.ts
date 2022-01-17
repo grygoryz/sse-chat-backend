@@ -11,7 +11,7 @@ import {
 	UserDisconnectedEventBO,
 } from './bos';
 import { eventsTypes, messagesPageSize } from './mappings';
-import { ChatRedisRepository } from './chat-redis.repository';
+import { ChatRepository } from './chat.repository';
 import * as crypto from 'crypto';
 import { SocketId } from '@common/types';
 
@@ -19,7 +19,7 @@ import { SocketId } from '@common/types';
 export class ChatService {
 	constructor(
 		private readonly socketsManagerService: SocketsManagerService,
-		private readonly chatRedisRepository: ChatRedisRepository,
+		private readonly chatRedisRepository: ChatRepository,
 	) {}
 
 	async connectUser(userData: UserDataBO, socket: Socket): Promise<SocketId> {
